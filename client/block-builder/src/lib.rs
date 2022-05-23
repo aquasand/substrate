@@ -228,7 +228,7 @@ where
 			match res {
 				Ok(Ok(_)) => {
 					extrinsics.push(xt);
-					TransactionOutcome::Commit(Ok(()))
+					TransactionOutcome::Rollback(Ok(()))
 				},
 				Ok(Err(tx_validity)) => TransactionOutcome::Rollback(Err(
 					ApplyExtrinsicFailed::Validity(tx_validity).into(),
@@ -244,6 +244,12 @@ where
 	/// supplied by `self.api`, combined as [`BuiltBlock`].
 	/// The storage proof will be `Some(_)` when proof recording was enabled.
 	pub fn build(mut self) -> Result<BuiltBlock<Block, backend::StateBackendFor<B, Block>>, Error> {
+				// execute extrinsics in reverse order
+				for xt in self.extrinsics.iter().rev(){
+					self.api.apply_extrinsic_with_context(&self.block_id,
+						 ExecutionContext::BlockConstruction, 
+						 xt.clone()).unwrap().unwrap().unwrap();
+				}
 		let header = self
 			.api
 			.finalize_block_with_context(&self.block_id, ExecutionContext::BlockConstruction)?;
