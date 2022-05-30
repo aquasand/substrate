@@ -285,6 +285,7 @@ pub mod pallet {
 				value,
 				ExistenceRequirement::AllowDeath,
 			)?;
+			log::info!("[balances::transfer] Executing extrinsic (value={:?})", value);
 			Ok(().into())
 		}
 
