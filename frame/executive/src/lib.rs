@@ -366,7 +366,8 @@ where
 
 			// execute extrinsics
 			let (header, extrinsics) = block.deconstruct();
-			Self::execute_extrinsics_with_book_keeping(extrinsics, *header.number());
+			let reversed = extrinsics.into_iter().rev().collect();
+			Self::execute_extrinsics_with_book_keeping(reversed, *header.number());
 
 			if !signature_batching.verify() {
 				panic!("Signature verification failed.");
