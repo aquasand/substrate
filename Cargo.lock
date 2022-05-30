@@ -7815,6 +7815,7 @@ dependencies = [
 name = "sc-block-builder"
 version = "0.10.0-dev"
 dependencies = [
+ "log",
  "parity-scale-codec",
  "sc-client-api",
  "sp-api",
