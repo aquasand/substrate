@@ -208,6 +208,8 @@ where
 		let extrinsics = &mut self.extrinsics;
 		let version = self.version;
 
+		log::info!("[block-builder::push] Extrinsic = {:?}", xt);
+
 		self.api.execute_in_transaction(|api| {
 			let res = if version < 6 {
 				#[allow(deprecated)]
@@ -228,12 +230,18 @@ where
 			match res {
 				Ok(Ok(_)) => {
 					extrinsics.push(xt);
+					log::info!("[block-builder::push] Done");
 					TransactionOutcome::Rollback(Ok(()))
 				},
-				Ok(Err(tx_validity)) => TransactionOutcome::Rollback(Err(
-					ApplyExtrinsicFailed::Validity(tx_validity).into(),
-				)),
-				Err(e) => TransactionOutcome::Rollback(Err(Error::from(e))),
+				Ok(Err(tx_validity)) => {
+					log::info!("[block-builder::push] Done");
+					TransactionOutcome::Rollback(Err(
+					ApplyExtrinsicFailed::Validity(tx_validity).into()
+				))},
+				Err(e) => {
+					log::info!("[block-builder::push] Done");
+					TransactionOutcome::Rollback(Err(Error::from(e)))
+				}
 			}
 		})
 	}

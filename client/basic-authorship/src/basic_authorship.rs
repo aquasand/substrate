@@ -363,6 +363,7 @@ where
 		});
 
 		for inherent in inherents {
+			log::info!("[basic-authorship::propose_with] Inherent = {:?}", inherent);
 			match block_builder.push(inherent) {
 				Err(ApplyExtrinsicFailed(Validity(e))) if e.exhausted_resources() => {
 					warn!("⚠️  Dropping non-mandatory inherent from overweight block.")
